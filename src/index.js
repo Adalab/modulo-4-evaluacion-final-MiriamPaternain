@@ -9,7 +9,7 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 require('dotenv').config();
-const bcrypt = require ("bcrypt");
+const bcrypt = require('bcrypt');
 
 // Arracar el servidor
 
@@ -157,26 +157,54 @@ server.delete('/recetas/:id', async (req, res) => {
   }
 });
 
-//POST registro
+//POST record
 
 server.post('/registro', async (req, res) => {
   try {
     const passwordHash = await bcrypt.hash(req.body.password, 10);
-  const conn = await getConnection();
-  conn.query(
-    'INSERT INTO usuarios_db (email, nombre, password) VALUES (?, ?, ?)',
-    [req.body.email, 
-      req.body.nombre, 
-      passwordHash]
-  );
-
-  res.json({
-    success: true,
-  });
+    const conn = await getConnection();
+    conn.query(
+      'INSERT INTO usuarios_db (email, nombre, password) VALUES (?, ?, ?)',
+      [req.body.email, req.body.nombre, passwordHash]
+    );
+    conn.end();
+    res.json({
+      success: true,
+    });
   } catch (error) {
     res.json({
       succes: false,
       message: 'Ha ocurrido un error',
     });
   }
+});
+
+// POST login
+server.post('/login', async (req, res) => {
+  const conn = await getConnection();
+  const [users] = await conn.query(
+    'SELECT * FROM usuarios_db WHERE nombre = ? ',
+    [req.body]
+  );
+  if (users.length !== 1) {
+    res.json({
+      success: false,
+      message: 'Usuario o contraseña no válidos',
+    });
+    return;
+  }
+  const [userdata] = users;
+  if (!(await bcrypt.compare(req.body.password, userdata.password))) {
+    res.json({
+      success: false,
+      message: 'Usuario o contraseña no válidos',
+    });
+    return;
+  }
+
+  conn.end();
+  res.json({
+    success: true,
+    token: { id: userdata.id, name: userdata.name },
+  });
 });
