@@ -69,3 +69,21 @@ server.get("/api/recetas/:id", async (req, res) => {
     results: result,
     });
   });
+
+  //POST 
+
+  server.post("/api/recetas", async (req, res) => {
+    const newRecipe = req.body;
+    const insert = "INSERT INTO recetas (`nombre`, `ingredientes`, `instrucciones`) VALUES (?,?,?)";
+    const conn = await getConnection();
+    const [result] = await conn.query(insert, [
+      newRecipe.nombre, 
+      newRecipe.ingredientes, 
+      newRecipe.instrucciones
+    ]);
+    conn.end();
+    res.json({
+      success: true,
+      id: result.id,
+    });
+  });
