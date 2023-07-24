@@ -43,7 +43,7 @@ server.listen(port, () => {
 
 // Endpoints
 
-// GET todas las recetas
+// GET all
 
 server.get("/api/recetas", async (req, res) => {
 const select = "select * from recetas";
@@ -56,7 +56,7 @@ res.json({
 });
 });
 
-// GET por id
+// GET by id
 
 server.get("/api/recetas/:id", async (req, res) => {
   const id = req.params.id;
@@ -74,6 +74,7 @@ server.get("/api/recetas/:id", async (req, res) => {
 
   server.post("/api/recetas", async (req, res) => {
     const newRecipe = req.body;
+    try {
     const insert = "INSERT INTO recetas (`nombre`, `ingredientes`, `instrucciones`) VALUES (?,?,?)";
     const conn = await getConnection();
     const [result] = await conn.query(insert, [
@@ -86,4 +87,32 @@ server.get("/api/recetas/:id", async (req, res) => {
       success: true,
       id: result.id,
     });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: error
+    });
+  }
   });
+
+  //PUT
+
+  server.put("/api/recetas/:id", async (req, res) => {
+const id = req.params.id;
+const {nombre, ingredientes, instrucciones} = req.body;
+try {
+  const update = "UPDATE recetas SET nombre= ?, ingredientes= ?, instrucciones= ? WHERE id= ?";
+  const conn = await getConnection();
+  const  [result] = await conn.query(update, [nombre, ingredientes, instrucciones, id]);
+  conn.end();
+  res.json({
+    success:true,
+  });
+} catch (error) {
+  res.json({
+    succes: false,
+    message: error
+  })
+}
+  })
+
