@@ -45,19 +45,15 @@ server.listen(port, () => {
 
 // GET todas las recetas
 
-server.get("/recetas", async (req, res) => {
-  try {
+server.get("/api/recetas", async (req, res) => {
 const select = "select * from recetas_db";
 const conn = await getConnection();
 const[result] = await conn.query(select);
+conn.end();
 res.json({
   "info": result.length, 
 "results": result
 });
-  } catch (error) {
-    res.status(500).json({error: "Error al obtener las recetas."
-  });
-  }
 });
 
 // GET por id
