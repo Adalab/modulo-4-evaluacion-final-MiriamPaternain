@@ -1,8 +1,5 @@
 // Servidor Express
 
-// Para probar los ficheros estáticos del fronend, entrar en <http://localhost:4500/>
-// Para probar el API, entrar en <http://localhost:4500/api/items>
-
 // Imports
 
 const express = require('express');
@@ -10,7 +7,7 @@ const cors = require('cors');
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken');
 
 // Arracar el servidor
 
@@ -38,7 +35,7 @@ async function getConnection() {
 
 //función JWT
 const generateToken = (payload) => {
-const token = jwt.sign(payload, 'secreto', { expiresIn: '1h' });
+  const token = jwt.sign(payload, 'secreto', { expiresIn: '1h' });
   return token;
 };
 
@@ -220,10 +217,10 @@ server.post('/login', async (req, res) => {
 
   conn.end();
 
-  const token = generateToken({id: userdata.id});
+  const token = generateToken({ id: userdata.id });
   res.json({
     success: true,
     token: token,
-    name: userdata.name
+    name: userdata.name,
   });
 });
