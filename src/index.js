@@ -10,6 +10,7 @@ const cors = require('cors');
 const mysql = require('mysql2/promise');
 require('dotenv').config();
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); 
 
 // Arracar el servidor
 
@@ -34,6 +35,21 @@ async function getConnection() {
 
   return connection;
 }
+
+//función JWT
+const generateToken = (payload) => {
+const token = jwt.sign(payload, 'secreto', { expiresIn: '1h' });
+  return token;
+};
+
+const verifyToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, 'secreto');
+    return decoded;
+  } catch (err) {
+    return null;
+  }
+};
 
 // Poner a escuchar el servidor
 
@@ -184,7 +200,7 @@ server.post('/login', async (req, res) => {
   const conn = await getConnection();
   const [users] = await conn.query(
     'SELECT * FROM usuarios_db WHERE nombre = ? ',
-    [req.body]
+    [req.body.nombre]
   );
   if (users.length !== 1) {
     res.json({
@@ -203,8 +219,11 @@ server.post('/login', async (req, res) => {
   }
 
   conn.end();
+
+  const token = generateToken({id: userdata.id});
   res.json({
     success: true,
-    token: { id: userdata.id, name: userdata.name },
+    token: token,
+    name: userdata.name
   });
 });
