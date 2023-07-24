@@ -46,7 +46,7 @@ server.listen(port, () => {
 // GET todas las recetas
 
 server.get("/api/recetas", async (req, res) => {
-const select = "select * from recetas_db";
+const select = "select * from recetas";
 const conn = await getConnection();
 const[result] = await conn.query(select);
 conn.end();
@@ -58,9 +58,9 @@ res.json({
 
 // GET por id
 
-server.get("/recetas/:id", async (req, res) => {
+server.get("/api/recetas/:id", async (req, res) => {
   const id = req.params.id;
-  const select= "select * from recetas_bd where id = ?";
+  const select= "select * from recetas where id = ?";
   const conn = await getConnection();
   const [result] = await conn.query(select, [id]);
   conn.end();
