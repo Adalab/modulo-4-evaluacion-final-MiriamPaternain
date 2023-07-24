@@ -34,8 +34,6 @@ async function getConnection() {
   return connection;
 }
 
-
-
 // Poner a escuchar el servidor
 
 const port = 4500;
@@ -43,29 +41,37 @@ server.listen(port, () => {
   console.log(`Ya se ha arrancado nuestro servidor: http://localhost:${port}/`);
 });
 
-
-
 // Endpoints
 
-// GET /api/items
+// GET todas las recetas
 
-server.get("/api/items", async (req, res) => {
-
-  const selectProducts = "SELECT * FROM products";
-
-  const conn = await getConnection();
-
-  const [results] = await conn.query(selectProducts);
-
-  console.log(results);
-
-  conn.end();
-
-  res.json(results);
+server.get("/recetas", async (req, res) => {
+  try {
+const select = "select * from recetas_db";
+const conn = await getConnection();
+const[result] = await conn.query(select);
+res.json({
+  "info": result.length, 
+"results": result
+});
+  } catch (error) {
+    res.status(500).json({error: "Error al obtener las recetas."
+  });
+  }
 });
 
+// GET por id
 
-
-// Serv estáticos
-
-server.use(express.static("./src/public_html"));
+server.get("/recetas/:id", async (req, res) => {
+  const id = req.params.id;
+  const select= "select * from recetas_bd where id = ?";
+  const conn = await getConnection();
+  const [result] = await conn.query(select, user);
+  console.log(result);
+  res.json({
+    info: {
+      count: result.length,
+    },
+    results: result,
+    });
+  });
