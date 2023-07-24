@@ -62,12 +62,10 @@ server.get("/recetas/:id", async (req, res) => {
   const id = req.params.id;
   const select= "select * from recetas_bd where id = ?";
   const conn = await getConnection();
-  const [result] = await conn.query(select, user);
+  const [result] = await conn.query(select, [id]);
+  conn.end();
   console.log(result);
   res.json({
-    info: {
-      count: result.length,
-    },
     results: result,
     });
   });
