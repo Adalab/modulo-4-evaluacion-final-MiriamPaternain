@@ -46,7 +46,8 @@ server.listen(port, () => {
 // GET all
 
 server.get("/recetas", async (req, res) => {
-const select = "select * from recetas";
+  try {
+    const select = "select * from recetas";
 const conn = await getConnection();
 const[result] = await conn.query(select);
 conn.end();
@@ -54,13 +55,20 @@ res.json({
   "info": result.length, 
 "results": result
 });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Ha ocurrido un error"
+    });
+  }
 });
 
 // GET by id
 
 server.get("/recetas/:id", async (req, res) => {
   const id = req.params.id;
-  const select= "select * from recetas where id = ?";
+  try {
+     const select= "select * from recetas where id = ?";
   const conn = await getConnection();
   const [result] = await conn.query(select, [id]);
   conn.end();
@@ -68,6 +76,12 @@ server.get("/recetas/:id", async (req, res) => {
   res.json({
     results: result,
     });
+  } catch (error) {
+    res.json({
+      success: false,
+      message: "Ha ocurrido un error"
+    });
+  }
   });
 
   //POST 
@@ -90,7 +104,7 @@ server.get("/recetas/:id", async (req, res) => {
   } catch (error) {
     res.json({
       success: false,
-      message: error
+      message: "Ha ocurrido un error"
     });
   }
   });
@@ -111,7 +125,7 @@ try {
 } catch (error) {
   res.json({
     succes: false,
-    message: error
+    message: "Ha ocurrido un error"
   })
 }
   })
@@ -131,7 +145,7 @@ try {
     } catch (error) {
       res.json({
     succes: false,
-    message: error
+    message: "Ha ocurrido un error"
     });
   }
   });
