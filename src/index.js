@@ -45,7 +45,7 @@ server.listen(port, () => {
 
 // GET all
 
-server.get("/api/recetas", async (req, res) => {
+server.get("/recetas", async (req, res) => {
 const select = "select * from recetas";
 const conn = await getConnection();
 const[result] = await conn.query(select);
@@ -58,7 +58,7 @@ res.json({
 
 // GET by id
 
-server.get("/api/recetas/:id", async (req, res) => {
+server.get("/recetas/:id", async (req, res) => {
   const id = req.params.id;
   const select= "select * from recetas where id = ?";
   const conn = await getConnection();
@@ -72,7 +72,7 @@ server.get("/api/recetas/:id", async (req, res) => {
 
   //POST 
 
-  server.post("/api/recetas", async (req, res) => {
+  server.post("/recetas", async (req, res) => {
     const newRecipe = req.body;
     try {
     const insert = "INSERT INTO recetas (`nombre`, `ingredientes`, `instrucciones`) VALUES (?,?,?)";
@@ -97,7 +97,7 @@ server.get("/api/recetas/:id", async (req, res) => {
 
   //PUT
 
-  server.put("/api/recetas/:id", async (req, res) => {
+  server.put("/recetas/:id", async (req, res) => {
 const id = req.params.id;
 const {nombre, ingredientes, instrucciones} = req.body;
 try {
@@ -118,7 +118,7 @@ try {
 
   //DELETE
 
-  server.delete ("/api/recetas/:id", async (req, res) => {
+  server.delete ("/recetas/:id", async (req, res) => {
     const id = req.params.id;
     try {
       const deleteSql = "DELETE FROM recetas WHERE id = ?";
